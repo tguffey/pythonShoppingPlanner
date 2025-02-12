@@ -3,33 +3,14 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import styled from "styled-components";
 import AddRecipe from "./AddRecipe";
 import CreateList from "./CreateList";
+import ViewAllRecipes from "./ViewAllRecipes";
+import RecipeDetails from "./RecipeDetails";
+import './App.css'; // Ensure this line is present
 
 const Container = styled.div`
     text-align: center;
     padding: 20px;
     font-family: Arial, sans-serif;
-`;
-
-const Button = styled(Link)`
-    display: block;
-    width: 200px;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    border-radius: 10px;
-    text-align: center;
-    transition: 0.3s;
-
-    &:hover {
-        background-color: #2980b9;
-    }
-`;
-
-const Title = styled.h1`
-    margin-bottom: 30px;
 `;
 
 function App() {
@@ -41,14 +22,20 @@ function App() {
                         path="/" 
                         element={
                             <>
-                                <Title>Shopping List App</Title>
-                                <Button to="/add-recipe">Add Recipes</Button>
-                                <Button to="/create-list">Create Shopping List</Button>
+                                {/* <h1 className="title">Shopping List App</h1> */}
+                                {/* <h1 className="title1">Shopping List App</h1> */}
+                                <h1 className="title2">Shopping List App</h1>
+                                {/* <h1 className="title3">Shopping List App</h1> */}
+                                <Link to="/add-recipe" className="button">Add Recipes</Link>
+                                <Link to="/create-list" className="button">Create Shopping List</Link>
+                                <Link to="/view-all-recipes" className="button">View All Recipes</Link>
                             </>
                         } 
                     />
                     <Route path="/add-recipe" element={<AddRecipe />} />
                     <Route path="/create-list" element={<CreateList />} />
+                    <Route path="/view-all-recipes" element={<ViewAllRecipes />} />
+                    <Route path="/recipe/:id" element={<RecipeDetails />} />
                 </Routes>
             </Container>
         </Router>

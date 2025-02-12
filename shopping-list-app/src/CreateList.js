@@ -1,39 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
-
-const Container = styled.div`
-  text-align: center;
-  padding: 20px;
-`;
-
-const Button = styled.button`
-  margin: 10px;
-  padding: 10px;
-  font-size: 16px;
-  background-color: #e67e22;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d35400;
-  }
-`;
-
-const BackButton = styled(Link)`
-  display: block;
-  margin-top: 20px;
-  text-decoration: none;
-  color: #3498db;
-  font-size: 18px;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
+import './CreateList.css';
+import './App.css'; // Ensure this line is present
 
 function CreateList() {
   const [recipes, setRecipes] = useState([]);
@@ -41,22 +10,18 @@ function CreateList() {
   const [shoppingList, setShoppingList] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/get_recipes/")
-      .then((response) => setRecipes(response.data.recipes))
-      .catch((error) => console.error("Error fetching recipes:", error));
+    fetchRecipes();
   }, []);
 
-  useEffect(() => {
-    fetchRecipes();
-}, []);
-
-const fetchRecipes = () => {
-    axios.get("http://127.0.0.1:8000/get_recipes/")
-        .then(response => setRecipes(response.data.recipes))
-        .catch(error => console.error("Error fetching recipes:", error));
-};
-
+  const fetchRecipes = () => {
+    axios
+      .get("http://127.0.0.1:8000/get_recipes/")
+      .then((response) => {
+        console.log("API Response:", response.data); // ✅ Debugging log
+        setRecipes(response.data.recipes || []); // ✅ Ensure it's always an array
+      })
+      .catch((error) => console.error("Error fetching recipes:", error));
+  };
 
   const deleteRecipe = (recipeId) => {
     if (!window.confirm("Are you sure you want to delete this recipe?")) return;
@@ -81,9 +46,9 @@ const fetchRecipes = () => {
       alert("Please select at least one recipe.");
       return;
     }
-
+  
     axios
-      .post("http://127.0.0.1:8000/compile_shopping_list/", selectedRecipes)
+      .post("http://127.0.0.1:8000/compile_shopping_list/", selectedRecipes) // ✅ Correct request format
       .then((response) => setShoppingList(response.data.shopping_list))
       .catch((error) => {
         console.error("Error compiling shopping list:", error);
@@ -92,42 +57,28 @@ const fetchRecipes = () => {
   };
 
   return (
-    <Container>
-      <h2>Select Recipes</h2>
+    <div className="container">
+      <h2 className="title2">Select Recipes</h2> {/* Ensure this line is present */}
       {recipes.length === 0 ? (
         <p>No recipes available. Add some recipes first!</p>
       ) : (
         recipes.map((recipe) => (
-          <div
-            key={recipe[0]}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "10px",
-            }}
-          >
+          <div key={recipe.id} className="recipe-item">
             <input
               type="checkbox"
-              onChange={() => handleRecipeSelection(recipe[0])}
+              onChange={() => handleRecipeSelection(recipe.id)}
             />
-            <span style={{ marginLeft: "10px", flexGrow: 1 }}>{recipe[1]}</span>
+            <span className="recipe-name">{recipe.name}</span>
             <button
-              onClick={() => deleteRecipe(recipe[0])}
-              style={{
-                marginLeft: "10px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                padding: "5px",
-                cursor: "pointer",
-              }}
+              onClick={() => deleteRecipe(recipe.id)}
+              className="delete-button"
             >
               ❌ Delete
             </button>
           </div>
         ))
       )}
-      <Button onClick={compileShoppingList}>Generate Shopping List</Button>
+      <button className="create-list-button" onClick={compileShoppingList}>Generate Shopping List</button>
       {shoppingList && (
         <div>
           <h2>Shopping List</h2>
@@ -140,8 +91,8 @@ const fetchRecipes = () => {
           </ul>
         </div>
       )}
-      <BackButton to="/">Back to Home</BackButton>
-    </Container>
+      <Link to="/" className="back-button">Back to Home</Link>
+    </div>
   );
 }
 

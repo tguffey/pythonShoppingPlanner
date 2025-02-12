@@ -1,0 +1,24 @@
+.container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .recipe-item {
+    cursor: pointer;
+  }
+  
+  .recipe-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .back-button {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #3498db;
+    font-size: 18px;
+  }
+  
+  .back-button:hover {
+    text-decoration: underline;
+  }

@@ -1,121 +1,82 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
-
-const Container = styled.div`
-    text-align: center;
-    padding: 20px;
-    background-color:rgb(246, 246, 207); /* Light beige background */
-    min-height: 100vh;
-`;
-
-const Input = styled.input`
-    margin: 5px;
-    padding: 10px;
-    width: 200px;
-    font-size: 16px;
-`;
-
-const Select = styled.select`
-    margin: 5px;
-    padding: 10px;
-    font-size: 16px;
-`;
-
-const Button = styled.button`
-    margin: 10px;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #219150;
-    }
-`;
-
-const BackButton = styled(Link)`
-    display: block;
-    margin-top: 20px;
-    text-decoration: none;
-    color: #3498db;
-    font-size: 18px;
-
-    &:hover {
-        text-decoration: underline;
-    }
-`;
+import './App.css';
+import './AddRecipe.css';
 
 function AddRecipe() {
-    const [recipeName, setRecipeName] = useState("");
-    const [ingredients, setIngredients] = useState([{ name: "", amount: "", unit: "grams" }]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [ingredients, setIngredients] = useState([{ name: "", amount: "", unit: "" }]);
 
-    const handleIngredientChange = (index, field, value) => {
-        const updatedIngredients = [...ingredients];
-        updatedIngredients[index][field] = value;
-        setIngredients(updatedIngredients);
-    };
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, { name: "", amount: "", unit: "" }]);
+  };
 
-    const addIngredientField = () => {
-        setIngredients([...ingredients, { name: "", amount: "", unit: "grams" }]);
-    };
+  const handleIngredientChange = (index, event) => {
+    const newIngredients = ingredients.slice();
+    newIngredients[index][event.target.name] = event.target.value;
+    setIngredients(newIngredients);
+  };
 
-    const submitRecipe = () => {
-        axios.post("http://127.0.0.1:8000/add_recipe/", { name: recipeName, ingredients })
-            .then(() => {
-                setRecipeName("");
-                setIngredients([{ name: "", amount: "", unit: "grams" }]);
-            })
-            .catch(error => console.error("Error adding recipe:", error));
-    };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const recipe = { name, description: description || null, ingredients };  // Ensure description is optional
+    axios.post("http://127.0.0.1:8000/add_recipe/", recipe)
+      .then(response => {
+        alert("Recipe added successfully!");
+        setName("");
+        setDescription("");
+        setIngredients([{ name: "", amount: "", unit: "" }]);
+      })
+      .catch(error => {
+        console.error("There was an error adding the recipe!", error);
+      });
+  };
 
-    return (
-        <Container>
-            <h2>Add a New Recipe</h2>
-            <Input
-                type="text"
-                placeholder="Recipe Name"
-                value={recipeName}
-                onChange={(e) => setRecipeName(e.target.value)}
-            />
-            {ingredients.map((ingredient, index) => (
-                <div key={index}>
-                    <Input
-                        type="text"
-                        placeholder="Ingredient Name"
-                        value={ingredient.name}
-                        onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
-                    />
-                    <Input
-                        type="number"
-                        placeholder="Amount"
-                        value={ingredient.amount}
-                        onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
-                    />
-                    <Select
-                        value={ingredient.unit}
-                        onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-                    >
-                        <option value="">(No unit)</option>  {/* Blank option */}
-                        <option value="grams">grams</option>
-                        <option value="ounces">ounces</option>
-                        <option value="pounds">pounds</option>
-                        <option value="cups">cups</option>
-                        <option value="tablespoons">tablespoons</option>
-                        <option value="teaspoons">teaspoons</option>
-                        <option value="liters">liters</option>
-                    </Select>
-                </div>
-            ))}
-            <Button onClick={addIngredientField}>Add Ingredient</Button>
-            <Button onClick={submitRecipe}>Submit Recipe</Button>
-            <BackButton to="/">Back to Home</BackButton>
-        </Container>
-    );
+  return (
+    <div className="container">
+      <h2 className="title2">Add Recipe</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Recipe Name:</label>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+        </div>
+        {ingredients.map((ingredient, index) => (
+          <div key={index} className="ingredient-row">
+            <div>
+              <label>Ingredient Name:</label>
+              <input type="text" name="name" value={ingredient.name} onChange={(e) => handleIngredientChange(index, e)} required />
+            </div>
+            <div>
+              <label>Amount:</label>
+              <input type="number" name="amount" value={ingredient.amount} onChange={(e) => handleIngredientChange(index, e)} required />
+            </div>
+            <div>
+              <label>Unit:</label>
+              <select name="unit" value={ingredient.unit} onChange={(e) => handleIngredientChange(index, e)}>
+                <option value="">No Unit</option>
+                <option value="grams">grams</option>
+                <option value="ounces">ounces</option>
+                <option value="pounds">pounds</option>
+                <option value="cups">cups</option>
+                <option value="tablespoons">tablespoons</option>
+                <option value="teaspoons">teaspoons</option>
+                <option value="liters">liters</option>
+              </select>
+            </div>
+          </div>
+        ))}
+        <div>
+          <label>Description (optional):</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        </div>
+        <button type="button" onClick={handleAddIngredient}>Add Ingredient</button>
+        <button type="submit">Add Recipe</button>
+      </form>
+      <Link to="/" className="back-button">Back to Home</Link>
+    </div>
+  );
 }
 
 export default AddRecipe;

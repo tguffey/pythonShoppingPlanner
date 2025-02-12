@@ -1,0 +1,51 @@
+.container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .create-list-button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .create-list-button:hover {
+    background-color: #d35400;
+  }
+  
+  .back-button {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #3498db;
+    font-size: 18px;
+  }
+  
+  .back-button:hover {
+    text-decoration: underline;
+  }
+  
+  .recipe-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .recipe-name {
+    margin-left: 10px;
+    flex-grow: 1;
+  }
+  
+  .delete-button {
+    margin-left: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+  }
